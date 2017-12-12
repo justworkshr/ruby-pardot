@@ -30,10 +30,21 @@ The available objects are:
 * visits
 
 === Querying Objects
+
+We've added a new method that allows users to query an arbirary Pardot object. Usage is as follows
+  query_parameters = {:assigned => false, :sort_by => "last_activity_at", :limit => 20}
+  prospects = client.query('prospect', query_parameters)
   
+The object parameter ('prospect' in the example above) are singular and camel case to match the URLs provided in the {Pardot API Docs}[http://developer.pardot.com]. For example, to query List Memberships, the above example would become
+  query_parameters = {:assigned => false, :sort_by => "last_activity_at", :limit => 20}
+  list_memberships = client.query('listMembership', query_parameters)
+
+
+In addition to the generic query method, you can still use the gem's default as described below.
+
 http://developer.pardot.com/kb/api-version-3/querying-prospects
   
-Most objects accept limit, offset, sort_by, and sord_order parameters
+Most objects accept limit, offset, sort_by, and sort_order parameters
 
   prospects = client.prospects.query(:assigned => false, :sort_by => "last_activity_at", :limit => 20)
   
