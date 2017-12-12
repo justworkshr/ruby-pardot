@@ -8,6 +8,7 @@ module Pardot
 
     include Authentication
     include Http
+    include Query
 
     include Objects::Emails
     include Objects::Lists

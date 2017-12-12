@@ -4,6 +4,7 @@ require 'cgi'
 
 require 'pardot/http'
 require 'pardot/error'
+require 'pardot/query'
 require 'pardot/authentication'
 
 require 'pardot/objects/emails'
