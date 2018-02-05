@@ -1,9 +1,9 @@
 module Pardot
   module Query
 
-    def query(object, params)
+    def query(object, params, retries=3)
       path = '/do/query/'
-      response = get(object, path, params)
+      response = get(object, path, params, num_retries=retries)
       result = process_result(response["result"], object)
       result
     end
