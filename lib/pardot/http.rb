@@ -20,13 +20,10 @@ module Pardot
     # handle errors that should be retried:
     # exponential backoff/retry for timeout errors
     # reauthenticate/retry for expired API key
-    rescue Pardot::ExpiredApiKeyError, Net::ReadTimeout => e
+    rescue Net::HTTPBadResponse, Pardot::ExpiredApiKeyError, Net::ReadTimeout => e
       if (tries_remaining -= 1) > 0
-        if e.message.include?("ExpiredApiKey")
-          reauthenticate
-        else
-          sleep(2 ** (max_retries - tries_remaining))
-        end
+        reauthenticate
+        sleep(2 ** (max_retries - tries_remaining))
         retry
       else
         raise Pardot::NetError.new(e)
