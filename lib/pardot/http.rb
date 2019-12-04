@@ -16,6 +16,7 @@ module Pardot
       smooth_params(object, params)
       full_path = fullpath(object, path)
       headers = create_auth_header object
+      # puts method, full_path, params, bodyParams, headers #remove
       if method == :get
         check_response(self.class.send(method, full_path, :query => params, :headers => headers))
       else
@@ -52,7 +53,7 @@ module Pardot
 
     def check_response(http_response)
       rsp = http_response["rsp"]
-
+      # puts 'this is the response ', rsp #remove
       error = rsp["err"] if rsp
       error ||= "Unknown Failure: #{rsp.inspect}" if rsp && rsp["stat"] == "fail"
       content = error['__content__'] if error.is_a?(Hash)
