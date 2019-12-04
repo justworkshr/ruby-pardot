@@ -4,18 +4,15 @@ module Pardot
     def query(object, params, retries=3)
       filtered_params = params.except(:ids) 
       result = {}
-      it = 3 #remove
 
       if object == 'email'
         params[:ids].each do |id|
-          if it == 0 then break end#remove
           path = "do/stats/id/#{id[0]}?"
           if !result.empty?
             result['email'] << get_result(object, path, filtered_params, retries, id[0])['email'][0]
           else
             result.merge!(get_result(object, path, filtered_params, retries, id[0]))
           end
-          it -= 1#remove
         end
       else
         path = '/do/query/'
