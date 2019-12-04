@@ -5,17 +5,23 @@ module Pardot
       request(:get, object, path, params = params, max_retries = num_retries)
     end
 
-    def post(object, path, params = {}, num_retries = 0)
-      request(:post, object, path, params = params, max_retries = num_retries)
+    def post(object, path, params = {}, num_retries = 0, bodyParams = {})
+      request(:post, object, path, params = params, bodyParams = bodyParams, max_retries = num_retries)
     end
 
     protected
 
-    def request(method, object, path, params = {}, max_retries = 0)
+    def request(method, object, path, params = {}, bodyParams = {}, max_retries = 0)
       tries_remaining ||= max_retries
       smooth_params(object, params)
       full_path = fullpath(object, path)
-      check_response(self.class.send(method, full_path, :query => params))
+      headers = create_auth_header object
+      # puts method, full_path, params, bodyParams, headers #remove
+      if method == :get
+        check_response(self.class.send(method, full_path, :query => params, :headers => headers))
+      else
+        check_response(self.class.send(method, full_path, :query => params, :body => bodyParams, :headers => headers))
+      end
 
     # handle errors that should be retried:
     # exponential backoff/retry for timeout errors
@@ -37,12 +43,17 @@ module Pardot
       return if object == "login"
 
       authenticate unless authenticated?
-      params.merge! :user_key => @user_key, :api_key => @api_key, :format => @format
+      params.merge! :format => @format
+    end
+
+    def create_auth_header object
+      return if object == "login"
+      { :Authorization => "Pardot api_key=#{@api_key}, user_key=#{@user_key}" }
     end
 
     def check_response(http_response)
       rsp = http_response["rsp"]
-
+      # puts 'this is the response ', rsp #remove
       error = rsp["err"] if rsp
       error ||= "Unknown Failure: #{rsp.inspect}" if rsp && rsp["stat"] == "fail"
       content = error['__content__'] if error.is_a?(Hash)
