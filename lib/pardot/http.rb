@@ -2,7 +2,7 @@ module Pardot
   module Http
 
     def get(object, path, params = {}, num_retries = 0)
-      request(:get, object, path, params = params, max_retries = num_retries)
+      request(:get, object, path, params = params, nil, max_retries = num_retries)
     end
 
     def post(object, path, params = {}, num_retries = 0, bodyParams = {})
