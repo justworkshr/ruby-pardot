@@ -5,11 +5,11 @@ module Pardot
       filtered_params = params.except(:ids, :email_type) 
       result = {}
 
-      if object == 'email'
+      if ['email','emailTemplate'].include? object
           params[:ids].each do |id|
-            path = (params[:email_type] == 'email' ? "do/read/id/#{id[0]}?" : "do/stats/id/#{id[0]}?")
+            path = (['email','email_template'].include?(params[:email_type]) ? "do/read/id/#{id[0]}?" : "do/stats/id/#{id[0]}?")
             if !result.empty?
-              result['email'] << get_result(object, path, filtered_params, retries, id[0], params[:email_type])['email'][0]
+              result[object] << get_result(object, path, filtered_params, retries, id[0], params[:email_type])[object][0]
             else
               result.merge!(get_result(object, path, filtered_params, retries, id[0], params[:email_type]))
             end
@@ -39,6 +39,9 @@ module Pardot
         result['total_results'] = 1
         result['email']['message_text'] = result['email'].delete('message')['text']
         result['email'] = [result['email']]
+      elsif args[1] =='email_template'
+        result['total_results'] = 1
+        result['emailTemplate'] = [result['emailTemplate']]
       else
         result = result['result']
         result["total_results"] = result["total_results"].to_i if result["total_results"]
